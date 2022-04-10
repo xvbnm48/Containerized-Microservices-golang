@@ -1,27 +1,39 @@
 package main
 
 import (
-	"fmt"
-	"unsafe"
+	"encoding/json"
+	"log"
+	"net/http"
 
-	"rsc.io/quote"
+	"github.com/gorilla/mux"
 )
 
-func reactProps(length, width float64) (area, perimeter float64) {
-	area = length + width
-	perimeter = 2 * (length + width)
-	return
-}
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("checking application health")
+	response := map[string]string{
+		"status": "UP",
+	}
 
+	json.NewEncoder(w).Encode(response)
+}
 func main() {
-	x := 10
-	name := "DevOps"
-	isWorking := false
+	r := mux.NewRouter()
 
-	fmt.Println("Hello World")
-	fmt.Println(quote.Go())
-	fmt.Println(name, x, isWorking)
-	fmt.Printf("type of name %T and size is %d \n", name, unsafe.Sizeof(name))
-	a, p := reactProps(1, 2)
-	fmt.Printf("area is %f and parimeter is %f ", a, p)
+	r.HandleFunc("/health", healthHandler)
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
+
+//func rootHandler(w http.ResponseWriter, r *http.Request) {
+//	fmt.Fprintf(w, "hello, you have requested %s , with token %s \n ", r.URL.Path, r.URL.Query().Get("token"))
+//
+//}
+//
+//func main() {
+//	http.HandleFunc("/", rootHandler)
+//
+//	fs := http.FileServer(http.Dir("static/"))
+//	http.Handle("/static/", http.StripPrefix("/static/", fs))
+//	log.Println("start")
+//	http.ListenAndServe(":8080", nil)
+//}
