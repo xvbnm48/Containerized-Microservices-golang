@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// komen
+
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("checking application health")
 	response := map[string]string{
